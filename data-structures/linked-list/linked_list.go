@@ -89,6 +89,27 @@ func (l *List)Add(value interface{}, index int) error {
 	return nil
 }
 
+func (l *List) Find(node *Node) (int, error) {
+	if l.Len() == 0 {
+		return 0, errors.New("Empty list")
+	}
+
+	index := 0
+	found := -1
+	l.Map(func(n *Node) {
+		index++
+		if n.Value == node.Value && found == -1 {
+			found = index
+		}
+	})
+
+	if found == -1 {
+		return 0, errors.New("Item not found")
+	}
+
+	return found, nil
+}
+
 func (l *List)Get(index int) (*Node, error) {
 	if index > l.Len(){
 		return nil, errors.New("Index out of range")
