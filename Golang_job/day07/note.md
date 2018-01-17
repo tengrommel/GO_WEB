@@ -24,3 +24,11 @@
 - 可选，返回给客户端
 
 ## HTTP client介绍
+>下载网页和图片
+
+## 链接的形式
+- http://xxx.com/a.jpg
+- //xx.com/a.jpg
+- /static/a.jpg
+- a.jpg
+
