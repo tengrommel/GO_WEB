@@ -9,6 +9,7 @@ import (
 	"log"
 	"fmt"
 	"net/http/httptest"
+	"time"
 )
 
 func GetFromHere(url string) (*http.Response, error) {
@@ -44,11 +45,13 @@ func StartHttpServer() *httptest.Server {
 
 
 func TestRequest(t *testing.T)  {
+	defer Benchmark(time.Now())
+
 	server := StartHttpServer()
 	url = server.URL
 	defer server.Close()
 
-	m := Request(url, http.DefaultClient.Get)
+	m := Request(url, GetFromHere)
 	if m.Content != "some content"{
 		t.Errorf("Error when receiving data: %v"+m.Content)
 	}
