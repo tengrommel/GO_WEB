@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"log"
 	"fmt"
+	"net/http/httptest"
 )
 
 func GetFromHere(url string) (*http.Response, error) {
@@ -27,8 +28,27 @@ func GetFromHere(url string) (*http.Response, error) {
 	return &resp, nil
 }
 
+func StartHttpServer() *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Add("content-type", "application/json")
+		m := Message{"some content", "some more content"}
+		content, err:=json.Marshal(m)
+		if err != nil{
+			log.Fatal("Error when marshalling: "+err.Error())
+		} else {
+			w.Write(content)
+		}
+	}))
+}
+
+
 func TestRequest(t *testing.T)  {
-	m := Request(url, GetFromHere)
+	server := StartHttpServer()
+	url = server.URL
+	defer server.Close()
+
+	m := Request(url, http.DefaultClient.Get)
 	if m.Content != "some content"{
 		t.Errorf("Error when receiving data: %v"+m.Content)
 	}
